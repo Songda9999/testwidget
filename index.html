@@ -8,12 +8,12 @@
   <!-- 本地调试用 CSP（上线请放到响应头并收紧白名单） -->
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' https:;
-                 script-src 'self' https://cdn.tailwindcss.com https://static.zdassets.com https://*.zdassets.com https://*.zendesk.com 'unsafe-inline' 'unsafe-eval';
-                 style-src 'self' https: 'unsafe-inline';
-                 img-src 'self' https: data:;
-                 font-src 'self' https: data:;
-                 connect-src 'self' https://*.zendesk.com https://*.zdassets.com wss://*.zendesk.com https:;
-                 frame-src https://*.zendesk.com https://*.zdassets.com;">
+                script-src 'self' https://cdn.tailwindcss.com https://static.zdassets.com https://*.zdassets.com https://*.zendesk.com 'unsafe-inline' 'unsafe-eval';
+                style-src 'self' https: 'unsafe-inline';
+                img-src 'self' https: data:;
+                font-src 'self' https: data:;
+                connect-src 'self' https://*.zendesk.com https://*.zdassets.com wss://*.zendesk.com https:;
+                frame-src https://*.zendesk.com https://*.zdassets.com;">
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -33,9 +33,10 @@
     @keyframes pulse-subtle{0%{box-shadow:0 0 0 0 rgba(20,184,166,.4)}70%{box-shadow:0 0 0 12px rgba(20,184,166,0)}100%{box-shadow:0 0 0 0 rgba(20,184,166,0)}}
     #open-support-btn{animation:pulse-subtle 2.5s infinite}
 
-    .service-btn{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px;min-height:96px;transition:background-color .2s,transform .2s,border-color .2s,box-shadow .2s}
+    .service-btn{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;height:72px;transition:background-color .2s,transform .2s,border-color .2s,box-shadow .2s}
+    .service-btn span{line-height:1.2}
     .service-btn:hover{background:#f9fafb;transform:translateY(-2px);border-color:#d1d5db}
-    .service-icon{width:28px;height:28px;min-width:28px;min-height:28px;flex:0 0 28px}
+    .service-icon{width:24px;height:24px;min-width:24px;min-height:24px;flex:0 0 28px}
     .service-icon svg{width:100%;height:100%}
     .service-icon svg [stroke]{vector-effect:non-scaling-stroke}
 
@@ -70,7 +71,6 @@
     .lang-btn.anim-pop{animation:press-pop .22s ease-out}
 
     /* === 语言弹窗：支持“Widget 内居中”与“贴按钮 Popover”两种模式 === */
-    /* 放在 #faq-view 内做绝对定位 */
     .lang-modal-backdrop{
       position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
@@ -89,11 +89,10 @@
     .lang-modal-backdrop.closing{visibility:visible; opacity:0; pointer-events:none}
     .lang-modal-backdrop.closing .lang-modal{transform:translate(10px,14px) scale(.985); opacity:.92}
 
-    /* 桌面端：作为 Popover 锚定在地球按钮 */
     @media (min-width: 521px){
       .lang-modal-backdrop.as-popover{
         background:transparent;
-        visibility:visible; opacity:1; pointer-events:none; /* 只让弹层接收事件 */
+        visibility:visible; opacity:1; pointer-events:none;
       }
       .lang-modal-backdrop.as-popover .lang-modal{
         position:absolute; width:320px; pointer-events:auto;
@@ -140,12 +139,12 @@
           <div class="flex items-center gap-3">
             <button id="lang-switch" class="lang-btn" aria-label="切换语言" title="切换语言">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
-                <path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 39.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/>
+                <path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 73.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/>
               </svg>
             </button>
             <button class="close-modal-btn text-gray-400 hover:text-black transition-colors" aria-label="关闭">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" class="w-5 h-5">
-                <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 0 45.3L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c12.5 12.5 12.5 32.8 0 45.3s32.8 12.5 0 45.3L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
               </svg>
             </button>
           </div>
@@ -177,7 +176,7 @@
                 <span class="service-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M440-120v-264L254-197l-57-57 187-186H120v-80h264L197-706l57-57 186 187v-264h80v264l186-187 57 57-187 186h264v80H576l187 186-57 57-186-187v264h-80Z"/></svg>
                 </span>
-                <span id="i18n-tool-1" class="text-gray-900 font-medium">重置谷歌验证器</span>
+                <span id="i18n-tool-1" class="text-gray-900 font-medium">重置谷歌验证</span>
               </a>
               <a href="https://100ex.zendesk.com/hc/zh-cn/articles/46055234188825" target="_blank" class="service-btn">
                 <span class="service-icon">
@@ -195,7 +194,7 @@
                 <span class="service-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480h80q0 66 25 124.5t68.5 102q43.5 43.5 102 69T480-159q134 0 227-93t93-227q0-134-93-227t-227-93q-89 0-161.5 43.5T204-640h116v80H80v-240h80v80q55-73 138-116.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-80-240q-17 0-28.5-11.5T360-360v-120q0-17 11.5-28.5T400-520v-40q0-33 23.5-56.5T480-640q33 0 56.5 23.5T560-560v40q17 0 28.5 11.5T600-480v120q0 17-11.5 28.5T560-320H400Zm40-200h80v-40q0-17-11.5-28.5T480-600q-17 0-28.5 11.5T440-560v40Z"/></svg>
                 </span>
-                <span id="i18n-tool-4" class="text-gray-900 font-medium">忘记密码怎么办</span>
+                <span id="i18n-tool-4" class="text-gray-900 font-medium">忘记相关密码</span>
               </a>
             </div>
           </div>
@@ -262,13 +261,13 @@
       zh:{ locale:'zh-cn', faqCatId:'45495601653401', announceCatId:'45495487972633', ui:{
         title:'客户支持', desc:'查看下方的常见问题以获得即时解决方案。如果常见问题无法解决您的问题，请点击下面的按钮联系我们的在线支持团队。',
         selfservice:'自助服务', faq:'常见问题', chat:'客户支持', searchPH:'搜索问题...', noResult:'没有找到相关结果。',
-        loading:'加载中...', tool1:'重置谷歌验证器', tool2:'收不到验证码', tool3:'如何身份认证', tool4:'忘记密码怎么办',
+        loading:'加载中...', tool1:'重置谷歌验证', tool2:'收不到验证码', tool3:'如何身份认证', tool4:'忘记相关密码',
         langTitle:'选择语言', zhBtn:'简体中文', enBtn:'English'
       }},
       en:{ locale:'en-us', faqCatId:'45222043871257', announceCatId:'45222030451097', ui:{
         title:'Support', desc:'Browse FAQs below for instant answers. If that doesn’t help, contact our live support via the button.',
         selfservice:'Self Service', faq:'FAQs', chat:'Live Support', searchPH:'Search…', noResult:'No results found.',
-        loading:'Loading…', tool1:'Reset Google Authenticator', tool2:'Didn’t receive verification code',
+        loading:'Loading…', tool1:'Reset Authenticator', tool2:'Didn’t receive verification',
         tool3:'How to Verify Identity', tool4:'Forgot Password', langTitle:'Choose Language',
         zhBtn:'Chinese (Simplified)', enBtn:'English'
       }}
@@ -324,13 +323,11 @@
     function secArticlesUrl(secId,per,loc){return `${ZD.base}/api/v2/help_center/${(loc||'zh-cn').toLowerCase()}/sections/${secId}/articles.json?per_page=${per||30}&sort_by=updated_at&sort_order=desc`}
     function catArticlesUrl(catId,per,loc){return `${ZD.base}/api/v2/help_center/categories/${catId}/articles.json?per_page=${per||10}&sort_by=updated_at&sort_order=desc&locale=${encodeURIComponent((loc||'zh-cn').toLowerCase())}`}
 
-    // 初始：桌面隐藏 launcher
+    // 初始：无论桌面或移动端都先隐藏 launcher
     onZEReady(()=>{
       try{
-        if(!isMobile()){
-          zE('messenger','hide');
-          hideLauncher(); // 确保 Zendesk SDK 加载后立即隐藏
-        }
+        zE('messenger','hide');
+        hideLauncher();
       }catch(e){};
     });
 
@@ -349,20 +346,16 @@
     async function loadAnnouncements(){
       stopAnnRotation();
       const lang=LANGS[cur]; const catId=(lang.announceCatId||'').trim();
-      if(!catId){ annPill.style.display='none'; console.warn("Announcement category ID is not set."); return; } // Add console warning for debugging
+      if(!catId){ annPill.style.display='none'; console.warn("Announcement category ID is not set."); return; }
       try{
         const data=await fetchWithTimeout(catArticlesUrl(catId,10,lang.locale));
         annItems=(data.articles||[]).map(a=>({title:(a.title||'').trim(),url:a.html_url})).filter(x=>x.title);
       }catch(e){
-        annItems=[];
-        console.error("Failed to fetch announcements:", e); // Log the error for debugging
+        annItems=[]; console.error("Failed to fetch announcements:", e);
       }
 
       if(!annSlots.length||!annItems.length){ annPill.style.display='none'; return; }
-      
-      // Only show the pill if there are announcements to display
       annPill.style.display='flex';
-      
       annIdx=0; currentSlotIndex=0;
       setSlot(annSlots[0],annItems[0]); annSlots[0].className='ann-slot active'; annSlots[1].className='ann-slot';
       if(annItems.length>1){ annTimer=setInterval(()=>slideTo((annIdx+1)%annItems.length),4200); }
@@ -405,7 +398,7 @@
         faqState.allArticles=all.flat();
         renderArticles(faqState.articlesBySection[sections[0]?.id]||[]);
       }catch(e){
-        console.error("Failed to fetch FAQ:", e); // Log the error for debugging
+        console.error("Failed to fetch FAQ:", e);
         faqLoading.classList.add('hidden'); faqRetry.classList.remove('hidden'); faqRetry.onclick=()=>loadFAQ();
       }
     }
@@ -426,12 +419,8 @@
       onZEReady(()=>{ try{ if(!isMobile()){ zE('messenger','hide'); hideLauncher(); } }catch(e){}; closeFab.classList.remove('visible'); });
       modal.classList.remove('hidden');
       setTimeout(()=>{ modal.classList.remove('opacity-0'); faqView.classList.remove('opacity-0','scale-95'); },10);
-      applyI18n(); 
-      // Await both promises to ensure content is loaded before displaying
-      await Promise.all([loadAnnouncements(),loadFAQ()]).catch(e => {
-        // Log errors from the async calls, but don't block the UI
-        console.error("Error during initial content load:", e);
-      });
+      applyI18n();
+      await Promise.all([loadAnnouncements(),loadFAQ()]).catch(e => { console.error("Error during initial content load:", e); });
     });
     function closeModal(){ modal.classList.add('opacity-0'); faqView.classList.add('opacity-0','scale-95'); setTimeout(()=>modal.classList.add('hidden'),300); }
     document.querySelectorAll('.close-modal-btn').forEach(b=>b.addEventListener('click', closeModal));
@@ -447,19 +436,18 @@
       langBackdrop.classList.remove('closing','as-popover','pop-above');
 
       if (!isMobile()) {
-        // 桌面：计算地球按钮相对 #faq-view 的位置
         const viewRect = faqView.getBoundingClientRect();
         const btnRect  = langBtn.getBoundingClientRect();
 
-        const popW = 320, popH = 160; // 估算高度
-        let left = btnRect.left - viewRect.left - 6;   // 稍微左一点
-        let top  = btnRect.bottom - viewRect.top + 10; // 按钮下方 10px
+        const popW = 320, popH = 160;
+        let left = btnRect.left - viewRect.left - 6;
+        let top  = btnRect.bottom - viewRect.top + 10;
         let above = false;
 
         const maxLeft = viewRect.width - popW - 12;
         if (left > maxLeft) left = Math.max(12, maxLeft);
 
-        if (top + popH > viewRect.height) { // 下方放不下，翻到上方
+        if (top + popH > viewRect.height) {
           top  = btnRect.top - viewRect.top - popH - 10;
           above = true;
         }
@@ -476,11 +464,10 @@
 
         langBackdrop.classList.add('as-popover');
       } else {
-        // 移动端：居中遮罩
         document.documentElement.style.overflow = 'hidden';
       }
 
-      void langBackdrop.offsetWidth; // 触发过渡
+      void langBackdrop.offsetWidth;
       langBackdrop.classList.add('open');
     }
     function closeLangModal(){
@@ -516,31 +503,46 @@
     });
 
     /* 自定义“V” */
+    // 点击只执行 hide，避免默认最小化动画导致“弹一下”
     closeFab.addEventListener('click', () => {
       onZEReady(() => {
-        try { zE('messenger','close'); } catch(e){}
         try { zE('messenger','hide'); } catch(e){}
         closeFab.classList.remove('visible');
+        stopAlign();
       });
     });
 
+    // 更稳地找到聊天 iframe：兼容不同 title/src
     function getChatFrame(){
-      const frames=[...document.querySelectorAll('iframe')].map(f=>({f,r:f.getBoundingClientRect(),t:(f.title||'').toLowerCase(),s:(f.src||'').toLowerCase()}))
-        .filter(x=> (x.s.includes('zdassets.com')||x.t.includes('zendesk')||x.t.includes('messaging')));
-      if(!frames.length) return null;
-      frames.sort((a,b)=>(b.r.width*b.r.height)-(a.r.width*a.r.height));
-      return frames[0].f;
+      const iframes = [...document.querySelectorAll('iframe')];
+      const candidates = iframes.map(f=>{
+        const t=(f.title||'').toLowerCase();
+        const s=(f.src||'').toLowerCase();
+        const r=f.getBoundingClientRect();
+        const zend = s.includes('zdassets.com') || s.includes('zendesk.com') || t.includes('zendesk') || t.includes('messaging') || s.includes('web_widget');
+        return {f,r,zend};
+      }).filter(x=>x.zend);
+
+      if(!candidates.length) return null;
+      candidates.sort((a,b)=>(b.r.width*b.r.height)-(a.r.width*a.r.height));
+      return candidates[0].f;
     }
+
     function isChatExpanded(){
       const f = getChatFrame();
       if (!f) return false;
+
       const r = f.getBoundingClientRect();
       const style = window.getComputedStyle(f);
-      const visible = style && style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity||'1') > 0.01;
-      const expanded = r.height >= 180 && r.width >= 260 && visible &&
+      const visible = style && style.display !== 'none' && style.visibility !== 'hidden' && (parseFloat(style.opacity||'1') > 0.01);
+
+      // 放宽阈值，兼容缩放/不同布局
+      const expanded = visible && r.height >= 160 && r.width >= 240 &&
                        r.bottom > 0 && r.right > 0 && r.top < window.innerHeight && r.left < window.innerWidth;
+
       return expanded;
     }
+
     function placeV(frame){
       if(!frame || !isChatExpanded()) { closeFab.classList.remove('visible'); return; }
       const r=frame.getBoundingClientRect();
@@ -553,7 +555,7 @@
 
     let rafId=null;
     function alignDesktopClose(){
-      if (isMobile()) return;
+      // 不再因为窄屏就早退；是否显示交由 CSS 控制
       cancelAnimationFrame(rafId);
       const loop=()=>{ const f=getChatFrame(); if(f) placeV(f); rafId=requestAnimationFrame(loop); };
       rafId=requestAnimationFrame(loop);
@@ -562,17 +564,20 @@
 
     onZEReady(()=>{ try{
       zE('messenger:on','open',  ()=>{ alignDesktopClose(); });
-      zE('messenger:on','close', ()=>{ try{ zE('messenger','hide'); }catch(e){}; stopAlign(); });
+      zE('messenger:on','close', ()=>{ 
+        try{ zE('messenger','hide'); }catch(e){}  // 进一步避免默认动画
+        stopAlign(); 
+      });
       zE('messenger:on','hide',  ()=>{ stopAlign(); });
     }catch(_){}});
 
     function hideLauncher(){
-      if (isMobile()) return;
+      // 更激进隐藏小尺寸 Launcher，减少闪现
       document.querySelectorAll('iframe').forEach(f=>{
         const t=(f.title||'').toLowerCase(), s=(f.src||'').toLowerCase();
         const r=f.getBoundingClientRect();
         const zend = s.includes('zdassets.com')||s.includes('zendesk.com')||t.includes('zendesk')||t.includes('messaging');
-        const looksLikeLauncher = (r.width<=120 && r.height<=120);
+        const looksLikeLauncher = (r.width<=200 && r.height<=200);
         if(zend && looksLikeLauncher){
           f.style.setProperty('display','none','important');
           f.style.setProperty('visibility','hidden','important');
