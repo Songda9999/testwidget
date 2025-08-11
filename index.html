@@ -5,7 +5,10 @@
   <title>客户支持（Zendesk Messaging）</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- 本地调试用 CSP（上线请放到响应头并收紧白名单） -->
+  <!-- 预隐藏，防首次闪现 -->
+  <script>document.documentElement.classList.add('zd-prehide');</script>
+
+  <!-- 本地调试用 CSP（上线请放到响应头并收紧域名） -->
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' https:;
                 script-src 'self' https://cdn.tailwindcss.com https://static.zdassets.com https://*.zdassets.com https://*.zendesk.com 'unsafe-inline' 'unsafe-eval';
@@ -22,31 +25,32 @@
 
   <style>
     .widget-font{font-family:'Inter',sans-serif}
-    .modal-backdrop{background:rgba(0,0,0,.7)}
     .faq-nav-item.active{color:#000}
+
+    /* 右下角自定义图标 */
+    #open-support-btn{animation:pulse-subtle 2.5s infinite; z-index:2147483647}
+    @keyframes pulse-subtle{0%{box-shadow:0 0 0 0 rgba(20,184,166,.4)}70%{box-shadow:0 0 0 12px rgba(20,184,166,0)}100%{box-shadow:0 0 0 0 rgba(20,184,166,0)}}
+    #open-support-btn.hidden{ display:none !important; }
 
     #faq-scroll-content::-webkit-scrollbar,#faq-nav::-webkit-scrollbar{width:6px;height:4px}
     #faq-scroll-content::-webkit-scrollbar-track,#faq-nav::-webkit-scrollbar-track{background:#f1f1f1}
     #faq-scroll-content::-webkit-scrollbar-thumb,#faq-nav::-webkit-scrollbar-thumb{background:#bdbdbd;border-radius:20px}
     #faq-scroll-content::-webkit-scrollbar-thumb:hover,#faq-nav::-webkit-scrollbar-thumb:hover{background:#888}
 
-    @keyframes pulse-subtle{0%{box-shadow:0 0 0 0 rgba(20,184,166,.4)}70%{box-shadow:0 0 0 12px rgba(20,184,166,0)}100%{box-shadow:0 0 0 0 rgba(20,184,166,0)}}
-    #open-support-btn{animation:pulse-subtle 2.5s infinite}
-
-    .service-btn{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;height:72px;transition:background-color .2s,transform .2s,border-color .2s,box-shadow .2s}
-    .service-btn span{line-height:1.2}
+    .service-btn{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:10px;height:72px;transition:.2s}
     .service-btn:hover{background:#f9fafb;transform:translateY(-2px);border-color:#d1d5db}
     .service-icon{width:24px;height:24px;min-width:24px;min-height:24px;flex:0 0 28px}
     .service-icon svg{width:100%;height:100%}
     .service-icon svg [stroke]{vector-effect:non-scaling-stroke}
 
-    #faq-search{ background:#fff !important; }
+    #faq-search{background:#fff!important}
     @media (hover:hover){
-      #faq-search{ transition: border-color .18s ease, box-shadow .18s ease; }
-      #faq-search:hover{ border-color:#14b8a6; box-shadow:0 0 0 3px rgba(20,184,166,.25); }
+      #faq-search{transition:border-color .18s ease, box-shadow .18s ease}
+      #faq-search:hover{border-color:#14b8a6;box-shadow:0 0 0 3px rgba(20,184,166,.25)}
     }
     #faq-search:focus,#faq-search:focus-visible{border-color:#14b8a6;box-shadow:0 0 0 3px rgba(20,184,166,.35);outline:none}
 
+    /* 公告（你的原样式） */
     .ann-pill{display:none;width:100%;padding:10px 14px;margin:0 0 12px 0;background:#eff3f6;border-radius:14px;color:#2f7f78;align-items:center;gap:10px;box-sizing:border-box}
     .ann-icon{flex:0 0 22px;height:22px;color:#2f7f78}
     .ann-track{position:relative;height:22px;min-width:0;flex:1;overflow:hidden;line-height:22px}
@@ -55,94 +59,74 @@
     .ann-slot.exit{transform:translateY(-22px);opacity:0}
     .ann-slot:hover{text-decoration:underline}
 
-    /* 隐藏官方 launcher（桌面） */
-    iframe[title*="Messaging launcher" i]{display:none!important;opacity:0!important;pointer-events:none!important;visibility:hidden!important}
-
-    /* 自定义“V”关闭（仅桌面） */
-    #close-chat-fab{position:fixed;width:32px;height:32px;display:flex;align-items:center;justify-content:center;background:transparent;border:0;color:#2b2f33;cursor:pointer;z-index:2147483650;opacity:0;pointer-events:none;transform:scale(.9);transition:opacity .18s ease,transform .18s ease,top .08s ease,right .08s ease}
-    #close-chat-fab.visible{opacity:1;transform:scale(1);pointer-events:auto}
-    @media (max-width:520px){#close-chat-fab{display:none!important}}
-
-    /* 语言按钮轻弹 */
+    /* 语言按钮/弹窗（你的原样） */
     @keyframes press-pop{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
     .lang-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e5e7eb;background:#fff;color:#0f766e;border-radius:9999px;cursor:pointer;transition:background .15s,border-color .15s,transform .15s,box-shadow .15s}
     .lang-btn:hover{background:#f0fdfa;border-color:#14b8a6;transform:translateY(-1px);box-shadow:0 0 0 3px rgba(20,184,166,.18)}
     .lang-btn svg{width:20px;height:20px;display:block}
     .lang-btn.anim-pop{animation:press-pop .22s ease-out}
 
-    /* === 语言弹窗：支持“Widget 内居中”与“贴按钮 Popover”两种模式 === */
-    .lang-modal-backdrop{
-      position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(0,0,0,.45);
-      visibility:hidden; opacity:0; pointer-events:none;
-      transition:opacity .22s ease; z-index:60;
-    }
-    .lang-modal{
-      width:min(92vw,520px);
-      background:#fff; border-radius:18px; box-shadow:0 12px 40px rgba(0,0,0,.18);
-      transform:translate(12px,12px) scale(.98); opacity:.96;
-      transition:transform .26s cubic-bezier(.16,1,.3,1), opacity .2s ease;
-    }
+    .lang-modal-backdrop{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.45); visibility:hidden; opacity:0; pointer-events:none; transition:opacity .22s ease; z-index:60}
+    .lang-modal{width:min(92vw,520px); background:#fff; border-radius:18px; box-shadow:0 12px 40px rgba(0,0,0,.18); transform:translateY(10px) scale(.94); opacity:.96; transform-origin: var(--origin-x,50%) var(--origin-y,50%); transition:transform .24s cubic-bezier(.16,1,.3,1), opacity .2s ease}
     .lang-modal-backdrop.open{visibility:visible; opacity:1; pointer-events:auto}
-    .lang-modal-backdrop.open .lang-modal{transform:translate(0,0) scale(1); opacity:1}
-    .lang-modal-backdrop.closing{visibility:visible; opacity:0; pointer-events:none}
-    .lang-modal-backdrop.closing .lang-modal{transform:translate(10px,14px) scale(.985); opacity:.92}
-
+    .lang-modal-backdrop.open .lang-modal{transform:translateY(0) scale(1); opacity:1}
+    .lang-modal-backdrop.closing .lang-modal{transform:translateY(8px) scale(.95); opacity:.92}
     @media (min-width: 521px){
-      .lang-modal-backdrop.as-popover{
-        background:transparent;
-        visibility:visible; opacity:1; pointer-events:none;
-      }
-      .lang-modal-backdrop.as-popover .lang-modal{
-        position:absolute; width:320px; pointer-events:auto;
-        top:var(--pop-top,0); left:var(--pop-left,0);
-      }
-      .lang-modal-backdrop.as-popover .lang-modal::after{
-        content:''; position:absolute; width:10px; height:10px; background:#fff;
-        box-shadow:0 2px 8px rgba(0,0,0,.12); transform:rotate(45deg);
-        left:var(--arrow-left,20px); top:var(--arrow-top,-6px);
-      }
-      .lang-modal-backdrop.as-popover.pop-above .lang-modal::after{ top:auto; bottom:-6px; }
+      .lang-modal-backdrop.as-popover{background:transparent; visibility:visible; opacity:1; pointer-events:none}
+      .lang-modal-backdrop.as-popover .lang-modal{position:absolute; width:320px; pointer-events:auto; top:var(--pop-top,0); left:var(--pop-left,0); transform:scale(.92); opacity:.96}
+      .lang-modal-backdrop.as-popover.open .lang-modal{transform:scale(1); opacity:1}
+      .lang-modal-backdrop.as-popover.closing .lang-modal{transform:scale(.94); opacity:.9}
+      .lang-modal-backdrop.as-popover .lang-modal::after{content:''; position:absolute; width:10px; height:10px; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.12); transform:rotate(45deg); left:var(--arrow-left,20px); top:var(--arrow-top,-6px)}
+      .lang-modal-backdrop.as-popover.pop-above .lang-modal::after{ top:auto; bottom:-6px }
     }
+
+    /* 弹层置顶 */
+    #support-modal-backdrop{ z-index:2147483646 !important; pointer-events:auto; }
+    #faq-view{ z-index:2147483647 !important; pointer-events:auto; }
+
+    /* 预隐藏防闪 */
+    html.zd-prehide body > iframe,
+    html.zd-prehide body > div[style*="position: fixed" i]{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+
+    /* 兜底隐藏官方 launcher */
+    iframe[title*="Messaging launcher" i],
+    iframe[title*="zendesk" i][src*="zdassets" i],
+    iframe[src*="web_widget" i],
+    iframe[src*="zdassets" i][src*="launcher" i]{
+      display:none!important;opacity:0!important;pointer-events:none!important;visibility:hidden!important;width:0!important;height:0!important;z-index:-1!important
+    }
+
+    /* 底部大按钮白字（双保险） */
+    #start-chat-from-faq-btn, #start-chat-from-faq-btn * { color:#fff !important; }
   </style>
 </head>
 <body>
   <div id="customer-support-widget-container">
-    <!-- 打开按钮（FAQ 入口） -->
+    <!-- 右下角浮标 -->
     <button id="open-support-btn"
-      class="widget-font fixed bottom-8 right-8 bg-teal-600 hover:bg-teal-700 text-white font-semibold p-3 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 z-50"
+      class="widget-font fixed bottom-8 right-8 bg-teal-600 hover:bg-teal-700 text-white font-semibold p-3 rounded-full shadow-lg flex items-center justify-center transition-all duration-300"
       aria-label="打开客户支持">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor" class="w-6 h-6">
-        <path d="M425.7 80C391 44.9 342.3 32 296 32h-80c-46.3 0-95 12.9-129.7 48C50.7 115.6 32 163.6 32 208v16c0 8.8-7.2 16-16 16s-16-7.2-16-16V208C0 141.1 23.2 81.1 64.9 41.6S164.9 0 216 0h80c51.1 0 101.1 23.2 141.6 64.9s64.9 96.7 64.9 148.8v16c0 8.8-7.2 16-16 16s-16-7.2-16-16V224c0-44.4-18.7-92.4-54.3-128zM128 224v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224c0-44.2 35.8-80 80-80h16c44.2 0 80 35.8 80 80v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224H128zm256 0v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224c0-44.2 35.8-80 80-80h16c44.2 0 80 35.8 80 80v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224h-64z"/>
-      </svg>
-    </button>
-
-    <!-- 自定义“V”（仅桌面） -->
-    <button id="close-chat-fab" aria-label="关闭客服聊天">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-           width="22" height="22" fill="none" stroke="currentColor" stroke-width="3"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <polyline points="6 9 12 15 18 9" />
+        <path d="M425.7 80C391 44.9 342.3 32 296 32h-80c-46.3 0-95 12.9-129.7 48C50.7 115.6 32 163.6 32 208v16c0 8.8-7.2 16-16 16s-16-7.2-16-16V208C0 141.1 23.2 81.1 64.9 41.6S164.9 0 216 0h80c51.1 0 101.1 23.2 141.6 64.9s64.9 96.7 64.9 148.8v16c0 8.8-7.2 16-16 16s-16-7.2-16-16V224c0-44.4-18.7-92.4-54.3-128zM128 224v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224c0-44.2 35.8-80 80-80h16c44.2 0 80 35.8 80 80v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224H128zm256 0v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224c0-44.2 35.8-80 80-80h16c0 0 80 35.8 80 80v128c0 26.5-21.5 48-48 48s-48-21.5-48-48V224h-64z"/>
       </svg>
     </button>
 
     <!-- FAQ 弹层 -->
     <div id="support-modal-backdrop"
-         class="widget-font fixed inset-0 z-[1000] modal-backdrop hidden flex items-center justify-center sm:items-end sm:justify-end opacity-0 transition-opacity duration-300 ease-in-out">
+         class="widget-font fixed inset-0 modal-backdrop hidden flex items-center justify-center sm:items-end sm:justify-end opacity-0 transition-opacity duration-300 ease-in-out">
       <div id="faq-view"
            class="bg-white text-gray-800 w-full h-full rounded-none sm:rounded-2xl shadow-2xl sm:w-auto sm:max-w-[440px] sm:h-auto sm:max-h-[80vh] sm:mb-24 sm:mr-8 flex flex-col transform transition-all duration-300 ease-in-out scale-95 opacity-0 origin-center sm:origin-bottom-right overflow-hidden relative">
 
-        <!-- 标题 + 语言切换 -->
-        <div class="flex-shrink-0 flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 id="i18n-title" class="text-2xl font-bold text-black">客户支持</h2>
+        <!-- 顶部栏 -->
+        <div id="faq-header" class="flex-shrink-0 flex justify-between items-center p-6 border-b border-gray-200">
+          <h2 id="i18n-title" class="text-2xl font-bold">客户支持</h2>
           <div class="flex items-center gap-3">
             <button id="lang-switch" class="lang-btn" aria-label="切换语言" title="切换语言">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
                 <path d="M480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-155.5t86-127Q252-817 325-848.5T480-880q83 0 155.5 31.5t127 86q54.5 54.5 86 127T880-480q0 82-31.5 155t-86 127.5q-54.5 54.5-127 86T480-80Zm0-82q26-36 45-75t31-83H404q12 44 31 83t45 75Zm-104-16q-18-33-31.5-68.5T322-320H204q29 50 72.5 87t99.5 55Zm208 0q56-18 99.5-55t72.5-87H638q-9 38-22.5 73.5T584-178ZM170-400h136q-3-20-4.5-39.5T300-480q0-21 1.5-40.5T306-560H170q-5 20-7.5 39.5T160-480q0 21 2.5 40.5T170-400Zm216 0h188q3-20 4.5-39.5T580-480q0-21-1.5-40.5T574-560H386q-3 20-4.5 39.5T380-480q0 21 1.5 40.5T386-400Zm268 0h136q5-20 7.5-39.5T800-480q0-21-2.5-40.5T790-560H654q3 20 4.5 73.5T660-480q0 21-1.5 40.5T654-400Zm-16-240h118q-29-50-72.5-87T584-782q18 33 31.5 68.5T638-640Zm-234 0h152q-12-44-31-83t-45-75q-26 36-45 75t-31 83Zm-200 0h118q9-38 22.5-73.5T376-782q-56 18-99.5 55T204-640Z"/>
               </svg>
             </button>
-            <button class="close-modal-btn text-gray-400 hover:text-black transition-colors" aria-label="关闭">
+            <button class="close-modal-btn transition-colors" aria-label="关闭">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" class="w-5 h-5">
                 <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c12.5 12.5 12.5 32.8 0 45.3s32.8 12.5 0 45.3L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
               </svg>
@@ -153,8 +137,7 @@
         <div id="faq-scroll-content" class="flex-grow min-h-0 p-6 overflow-y-auto">
           <!-- 公告 -->
           <div id="ann-pill" class="ann-pill">
-            <svg class="ann-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <svg class="ann-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
               <line x1="3" y1="10" x2="21" y2="10"></line>
             </svg>
@@ -164,38 +147,16 @@
             </div>
           </div>
 
-          <p id="i18n-desc" class="text-gray-500 mb-6 text-sm">
-            查看下方的常见问题以获得即时解决方案。如果常见问题无法解决您的问题，请点击下面的按钮联系我们的在线支持团队。
-          </p>
+          <p id="i18n-desc" class="text-gray-500 mb-6 text-sm">查看下方的常见问题以获得即时解决方案。如果常见问题无法解决您的问题，请点击下面的按钮联系我们的在线支持团队。</p>
 
           <!-- 自助服务 -->
           <div class="mb-8">
             <h3 id="i18n-selfservice" class="text-lg font-semibold text-black mb-4">自助服务</h3>
             <div class="grid grid-cols-2 gap-4">
-              <a href="https://100ex.zendesk.com/hc/zh-cn/articles/46056201877529" target="_blank" class="service-btn">
-                <span class="service-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M440-120v-264L254-197l-57-57 187-186H120v-80h264L197-706l57-57 186 187v-264h80v264l186-187 57 57-187 186h264v80H576l187 186-57 57-186-187v264h-80Z"/></svg>
-                </span>
-                <span id="i18n-tool-1" class="text-gray-900 font-medium">重置谷歌验证</span>
-              </a>
-              <a href="https://100ex.zendesk.com/hc/zh-cn/articles/46055234188825" target="_blank" class="service-btn">
-                <span class="service-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M480-360q17 0 28.5-11.5T520-400q0-17-11.5-28.5T480-440q-17 0-28.5 11.5T440-400q0 17 11.5 28.5T480-360Zm-40-160h80v-240h-80v240ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg>
-                </span>
-                <span id="i18n-tool-2" class="text-gray-900 font-medium">收不到验证码</span>
-              </a>
-              <a href="https://100ex.zendesk.com/hc/zh-cn/articles/46054832990745" target="_blank" class="service-btn">
-                <span class="service-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M702-480 560-622l57-56 85 85 170-170 56 57-226 226Zm-342 0q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm80-80h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0 260Zm0-340Z"/></svg>
-                </span>
-                <span id="i18n-tool-3" class="text-gray-900 font-medium">如何身份认证</span>
-              </a>
-              <a href="https://100ex.zendesk.com/hc/zh-cn/articles/46055701344921" target="_blank" class="service-btn">
-                <span class="service-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480h80q0 66 25 124.5t68.5 102q43.5 43.5 102 69T480-159q134 0 227-93t93-227q0-134-93-227t-227-93q-89 0-161.5 43.5T204-640h116v80H80v-240h80v80q55-73 138-116.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-80-240q-17 0-28.5-11.5T360-360v-120q0-17 11.5-28.5T400-520v-40q0-33 23.5-56.5T480-640q33 0 56.5 23.5T560-560v40q17 0 28.5 11.5T600-480v120q0 17-11.5 28.5T560-320H400Zm40-200h80v-40q0-17-11.5-28.5T480-600q-17 0-28.5 11.5T440-560v40Z"/></svg>
-                </span>
-                <span id="i18n-tool-4" class="text-gray-900 font-medium">忘记相关密码</span>
-              </a>
+              <a id="tool-1" href="#" target="_blank" class="service-btn"><span class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M440-120v-264L254-197l-57-57 187-186H120v-80h264L197-706l57-57 186 187v-264h80v264l186-187 57 57-187 186h264v80H576l187 186-57 57-186-187v264h-80Z"/></svg></span><span id="i18n-tool-1" class="text-gray-900 font-medium">重置谷歌验证</span></a>
+              <a id="tool-2" href="#" target="_blank" class="service-btn"><span class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M480-360q17 0 28.5-11.5T520-400q0-17-11.5-28.5T480-440q-17 0-28.5 11.5T440-400q0 17 11.5 28.5T480-360Zm-40-160h80v-240h-80v240ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg></span><span id="i18n-tool-2" class="text-gray-900 font-medium">收不到验证码</span></a>
+              <a id="tool-3" href="#" target="_blank" class="service-btn"><span class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M702-480 560-622l57-56 85 85 170-170 56 57-226 226Zm-342 0q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm80-80h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0 260Zm0-340Z"/></svg></span><span id="i18n-tool-3" class="text-gray-900 font-medium">如何身份认证</span></a>
+              <a id="tool-4" href="#" target="_blank" class="service-btn"><span class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#00cfb6"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-127-127T80-480h80q0 66 25 124.5t68.5 102q43.5 43.5 102 69T480-159q134 0 227-93t93-227q0-134-93-227t-227-93q-89 0-161.5 43.5T204-640h116v80H80v-240h80v80q55-73 138-116.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-80-240q-17 0-28.5-11.5T360-360v-120q0-17 11.5-28.5T400-520v-40q0-33 23.5-56.5T480-640q33 0 56.5 23.5T560-560v40q17 0 28.5 11.5T600-480v120q0 17-11.5 28.5T560-320H400Zm40-200h80v-40q0-17-11.5-28.5T480-600q-17 0-28.5 11.5T440-560v40Z"/></svg></span><span id="i18n-tool-4" class="text-gray-900 font-medium">忘记相关密码</span></a>
             </div>
           </div>
 
@@ -218,25 +179,32 @@
                 <p id="no-results" class="text-gray-500 hidden">没有找到相关结果。</p>
                 <p id="faq-loading" class="text-gray-500">加载中...</p>
                 <button id="faq-retry" class="hidden mt-3 inline-flex items-center px-3 py-1.5 text-sm border rounded hover:bg-gray-50">重试</button>
+
+                <!-- 文章内嵌查看 -->
+                <div id="faq-article" class="hidden pt-2">
+                  <button id="faq-back" class="mb-4 text-teal-600 hover:underline">← 返回</button>
+                  <h4 id="faq-article-title" class="text-lg font-semibold mb-3"></h4>
+                  <div id="faq-article-body" class="prose max-w-none"></div>
+                </div>
               </div>
             </div>
           </div>
 
           <div class="flex-shrink-0 mt-6">
             <button id="start-chat-from-faq-btn" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-3 transition-colors duration-200">
-              <span id="i18n-chat">客户支持</span>
+              <span id="i18n-chat" class="text-white">联系客户支持</span>
             </button>
           </div>
         </div>
 
-        <!-- 语言选择弹窗：移动端居中；桌面贴“地球”按钮 Popover -->
+        <!-- 语言选择弹窗 -->
         <div id="lang-backdrop" class="lang-modal-backdrop">
           <div class="lang-modal">
             <div class="flex items-center justify-between p-5 border-b border-gray-200">
               <h3 id="i18n-lang-title" class="text-xl font-semibold">选择语言</h3>
-              <button id="lang-close" class="text-gray-400 hover:text-black" aria-label="关闭">
+              <button id="lang-close" class="text-gray-400 hover:text黑" aria-label="关闭">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="currentColor" width="18" height="18">
-                  <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 0 45.3L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                  <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c12.5 12.5 12.5 32.8 0 45.3s32.8 12.5 0 45.3L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
                 </svg>
               </button>
             </div>
@@ -257,38 +225,47 @@
     const ZD = { base:'https://100ex.zendesk.com' };
     const FETCH_TIMEOUT_MS = 6000;
 
+    /* 语言 & 链接 */
+    const SELF_LINKS = {
+      zh:{ tool1:'https://100ex.zendesk.com/hc/zh-cn/articles/46056201877529',
+           tool2:'https://100ex.zendesk.com/hc/zh-cn/articles/46055234188825',
+           tool3:'https://100ex.zendesk.com/hc/zh-cn/articles/46054832990745',
+           tool4:'https://100ex.zendesk.com/hc/zh-cn/articles/46055701344921' },
+      en:{ tool1:'https://100ex.zendesk.com/hc/en-us/articles/46056201877529',
+           tool2:'https://100ex.zendesk.com/hc/en-us/articles/46055234188825',
+           tool3:'https://100ex.zendesk.com/hc/en-us/articles/46054832990745',
+           tool4:'https://100ex.zendesk.com/hc/en-us/articles/46055701344921' }
+    };
+
     const LANGS = {
       zh:{ locale:'zh-cn', faqCatId:'45495601653401', announceCatId:'45495487972633', ui:{
         title:'客户支持', desc:'查看下方的常见问题以获得即时解决方案。如果常见问题无法解决您的问题，请点击下面的按钮联系我们的在线支持团队。',
-        selfservice:'自助服务', faq:'常见问题', chat:'客户支持', searchPH:'搜索问题...', noResult:'没有找到相关结果。',
+        selfservice:'自助服务', faq:'常见问题', chat:'联系客户支持', searchPH:'搜索问题...', noResult:'没有找到相关结果。',
         loading:'加载中...', tool1:'重置谷歌验证', tool2:'收不到验证码', tool3:'如何身份认证', tool4:'忘记相关密码',
         langTitle:'选择语言', zhBtn:'简体中文', enBtn:'English'
       }},
       en:{ locale:'en-us', faqCatId:'45222043871257', announceCatId:'45222030451097', ui:{
         title:'Support', desc:'Browse FAQs below for instant answers. If that doesn’t help, contact our live support via the button.',
-        selfservice:'Self Service', faq:'FAQs', chat:'Live Support', searchPH:'Search…', noResult:'No results found.',
+        selfservice:'Self Service', faq:'FAQs', chat:'Contact Support', searchPH:'Search…', noResult:'No results found.',
         loading:'Loading…', tool1:'Reset Authenticator', tool2:'Didn’t receive verification',
         tool3:'How to Verify Identity', tool4:'Forgot Password', langTitle:'Choose Language',
         zhBtn:'Chinese (Simplified)', enBtn:'English'
       }}
     };
-
     let cur='zh';
     const ui=(k)=>LANGS[cur].ui[k];
 
+    /* DOM */
     const openBtn=document.getElementById('open-support-btn');
     const modal=document.getElementById('support-modal-backdrop');
     const faqView=document.getElementById('faq-view');
     const startChat=document.getElementById('start-chat-from-faq-btn');
-    const closeFab=document.getElementById('close-chat-fab');
-
     const faqNav=document.getElementById('faq-nav');
     const faqList=document.getElementById('faq-list');
     const faqSearch=document.getElementById('faq-search');
     const faqLoading=document.getElementById('faq-loading');
     const faqRetry=document.getElementById('faq-retry');
     const noResults=document.getElementById('no-results');
-
     const titleEl=document.getElementById('i18n-title');
     const descEl=document.getElementById('i18n-desc');
     const selfEl=document.getElementById('i18n-selfservice');
@@ -298,11 +275,13 @@
     const t2El=document.getElementById('i18n-tool-2');
     const t3El=document.getElementById('i18n-tool-3');
     const t4El=document.getElementById('i18n-tool-4');
-
+    const tool1=document.getElementById('tool-1');
+    const tool2=document.getElementById('tool-2');
+    const tool3=document.getElementById('tool-3');
+    const tool4=document.getElementById('tool-4');
     const annPill=document.getElementById('ann-pill');
     const annTrack=document.getElementById('ann-text');
     const annSlots=annTrack.querySelectorAll('.ann-slot');
-
     const langBtn=document.getElementById('lang-switch');
     const langBackdrop=document.getElementById('lang-backdrop');
     const langCloseBtn=document.getElementById('lang-close');
@@ -310,10 +289,9 @@
     const btnEn=document.getElementById('lang-en');
 
     /* 小工具 */
-    const debounce=(fn,ms=200)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}}
     function onZEReady(cb){ if(typeof zE==='function'){ zE(cb); } else setTimeout(()=>onZEReady(cb),60); }
     function isMobile(){ return Math.min(window.innerWidth, document.documentElement.clientWidth||window.innerWidth) <= 520; }
-    function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+    function escapeHtml(s){ return String(s||'').replace(/[&<>\"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[ch])); }
     async function fetchWithTimeout(url){
       const c=new AbortController(); const to=setTimeout(()=>c.abort(),FETCH_TIMEOUT_MS);
       try{ const res=await fetch(url,{signal:c.signal}); clearTimeout(to); if(!res.ok) throw new Error(res.status); return await res.json(); }
@@ -323,13 +301,73 @@
     function secArticlesUrl(secId,per,loc){return `${ZD.base}/api/v2/help_center/${(loc||'zh-cn').toLowerCase()}/sections/${secId}/articles.json?per_page=${per||30}&sort_by=updated_at&sort_order=desc`}
     function catArticlesUrl(catId,per,loc){return `${ZD.base}/api/v2/help_center/categories/${catId}/articles.json?per_page=${per||10}&sort_by=updated_at&sort_order=desc&locale=${encodeURIComponent((loc||'zh-cn').toLowerCase())}`}
 
-    // 初始：无论桌面或移动端都先隐藏 launcher
-    onZEReady(()=>{
-      try{
-        zE('messenger','hide');
-        hideLauncher();
-      }catch(e){};
-    });
+    /* ==== 通用右下角悬浮 Sweeper（不动你的按钮） ==== */
+    const BR_SWEEP_WHITELIST = new Set([
+      'customer-support-widget-container','support-modal-backdrop','faq-view','lang-backdrop','open-support-btn'
+    ]);
+    let brObs=null, brTimer=null; const brHidden=new Set();
+    const nearBR = r => (innerWidth - r.right <= 300) && (innerHeight - r.bottom <= 300);
+    function looksBR(el){
+      if(!(el instanceof Element)) return false;
+      if(BR_SWEEP_WHITELIST.has(el.id)) return false;
+      const cs = getComputedStyle(el);
+      if(cs.position!=='fixed' && cs.position!=='sticky') return false;
+      const r = el.getBoundingClientRect();
+      if(!nearBR(r)) return false;
+      if(r.width<=420 && r.height<=420){
+        const rad = parseFloat(cs.borderTopLeftRadius)||0;
+        const meta = ((el.getAttribute('aria-label')||'')+' '+(el.getAttribute('title')||'')+' '+el.className).toLowerCase();
+        if(rad>=18 || /chat|客服|support|help|message|messag|帮助|咨询|在线/i.test(meta) || (el.querySelector && el.querySelector('svg'))) return true;
+      }
+      return false;
+    }
+    function hideOne(el){
+      if(brHidden.has(el)) return;
+      el.setAttribute('data-br-old-style', el.getAttribute('style')||'');
+      el.style.setProperty('display','none','important');
+      el.style.setProperty('visibility','hidden','important');
+      el.style.setProperty('opacity','0','important');
+      el.style.setProperty('pointer-events','none','important');
+      brHidden.add(el);
+    }
+    function sweepBR(root=document){
+      const scope = root.querySelectorAll ? root : document;
+      scope.querySelectorAll('body > *, iframe, [style*="position: fixed"]').forEach(n=>{ if(looksBR(n)) hideOne(n); });
+    }
+    function startBRSweeper(){
+      stopBRSweeper();
+      try{ document.body.appendChild(modal); }catch(_){}
+      sweepBR();
+      brObs = new MutationObserver(muts=>{
+        muts.forEach(m=> m.addedNodes && m.addedNodes.forEach(n=>{
+          if(n.nodeType!==1) return;
+          if(looksBR(n)) hideOne(n); else sweepBR(n);
+        }));
+      });
+      brObs.observe(document.documentElement,{childList:true,subtree:true});
+      brTimer = setInterval(sweepBR, 800);
+    }
+    function stopBRSweeper(){
+      if(brObs){ brObs.disconnect(); brObs=null; }
+      if(brTimer){ clearInterval(brTimer); brTimer=null; }
+      brHidden.clear();
+    }
+
+    /* FAQ 显隐 —— 只在手机隐藏右下角按钮 */
+    function openFAQ(){
+      startBRSweeper();
+      if (isMobile()) openBtn.classList.add('hidden');
+      modal.classList.remove('hidden');
+      setTimeout(()=>{ modal.classList.remove('opacity-0'); faqView.classList.remove('opacity-0','scale-95'); },10);
+    }
+    function closeFAQ(){
+      stopBRSweeper();
+      modal.classList.add('opacity-0'); faqView.classList.add('opacity-0','scale-95');
+      setTimeout(()=>{
+        modal.classList.add('hidden');
+        if (isMobile() && !chatOpen) openBtn.classList.remove('hidden');
+      },300);
+    }
 
     /* 公告轮播 */
     let annItems=[], annIdx=0, annTimer=null, currentSlotIndex=0;
@@ -346,17 +384,13 @@
     async function loadAnnouncements(){
       stopAnnRotation();
       const lang=LANGS[cur]; const catId=(lang.announceCatId||'').trim();
-      if(!catId){ annPill.style.display='none'; console.warn("Announcement category ID is not set."); return; }
+      if(!catId){ annPill.style.display='none'; return; }
       try{
         const data=await fetchWithTimeout(catArticlesUrl(catId,10,lang.locale));
         annItems=(data.articles||[]).map(a=>({title:(a.title||'').trim(),url:a.html_url})).filter(x=>x.title);
-      }catch(e){
-        annItems=[]; console.error("Failed to fetch announcements:", e);
-      }
-
+      }catch(e){ annItems=[]; }
       if(!annSlots.length||!annItems.length){ annPill.style.display='none'; return; }
-      annPill.style.display='flex';
-      annIdx=0; currentSlotIndex=0;
+      annPill.style.display='flex'; annIdx=0; currentSlotIndex=0;
       setSlot(annSlots[0],annItems[0]); annSlots[0].className='ann-slot active'; annSlots[1].className='ann-slot';
       if(annItems.length>1){ annTimer=setInterval(()=>slideTo((annIdx+1)%annItems.length),4200); }
     }
@@ -364,7 +398,8 @@
     /* FAQ 数据 */
     const faqState={sections:[],articlesBySection:{},allArticles:[]};
     function renderNav(sections){
-      faqNav.innerHTML='<div id="faq-nav-highlighter" class="absolute right-[-2px] w-0.5 bg-teal-600 transition-all duration-300 ease-in-out" style="opacity:0"></div>';
+      const navHL = '<div id="faq-nav-highlighter" class="absolute right-[-2px] w-0.5 bg-teal-600 transition-all duration-300 ease-in-out" style="opacity:0"></div>';
+      faqNav.innerHTML = navHL;
       sections.forEach((s,i)=>{
         const a=document.createElement('a'); a.href='#'; a.dataset.sectionId=s.id;
         a.className='faq-nav-item text-gray-500 hover:text-black block whitespace-nowrap pr-8 pl-4 py-2';
@@ -376,9 +411,10 @@
     }
     function renderArticles(list){
       faqLoading.classList.add('hidden'); faqRetry.classList.add('hidden');
+      document.getElementById('faq-article').classList.add('hidden');
       if(!list||!list.length){ faqList.innerHTML=''; noResults.textContent=ui('noResult'); noResults.classList.remove('hidden'); return; }
       noResults.classList.add('hidden');
-      faqList.innerHTML=list.map(a=>`<li><a href="${a.html_url}" target="_blank" rel="noopener noreferrer" class="hover:text-teal-600 transition-colors">${(a.title||'').replace(/[&<>"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[s]))}</a></li>`).join('');
+      faqList.innerHTML=list.map(a=>`<li><a href="#" data-id="${a.id}" class="hover:text-teal-600 transition-colors">${(a.title||'').replace(/[&<>\"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[s]))}</a></li>`).join('');
     }
     async function loadFAQ(){
       const lang=LANGS[cur]; const catId=(lang.faqCatId||'').trim();
@@ -398,11 +434,17 @@
         faqState.allArticles=all.flat();
         renderArticles(faqState.articlesBySection[sections[0]?.id]||[]);
       }catch(e){
-        console.error("Failed to fetch FAQ:", e);
         faqLoading.classList.add('hidden'); faqRetry.classList.remove('hidden'); faqRetry.onclick=()=>loadFAQ();
       }
     }
 
+    function applySelfServiceLinks(){
+      const links = SELF_LINKS[cur]||{};
+      tool1.href = links.tool1 || '#';
+      tool2.href = links.tool2 || '#';
+      tool3.href = links.tool3 || '#';
+      tool4.href = links.tool4 || '#';
+    }
     function applyI18n(){
       const lang=LANGS[cur];
       titleEl.textContent=lang.ui.title; descEl.textContent=lang.ui.desc; selfEl.textContent=lang.ui.selfservice;
@@ -411,210 +453,170 @@
       t1El.textContent=lang.ui.tool1; t2El.textContent=lang.ui.tool2; t3El.textContent=lang.ui.tool3; t4El.textContent=lang.ui.tool4;
       document.getElementById('i18n-lang-title').textContent=lang.ui.langTitle;
       btnZh.textContent=lang.ui.zhBtn; btnEn.textContent=lang.ui.enBtn;
-      const toEn=(cur==='zh'); langBtn.setAttribute('title',toEn?'Switch to English':'切换到中文'); langBtn.setAttribute('aria-label',toEn?'Switch to English':'切换到中文');
+      const toEn=(cur==='zh'); langBtn.title=toEn?'Switch to English':'切换到中文'; langBtn.setAttribute('aria-label', langBtn.title);
+      applySelfServiceLinks();
     }
 
-    /* 打开/关闭 FAQ */
-    openBtn.addEventListener('click', async ()=>{
-      onZEReady(()=>{ try{ if(!isMobile()){ zE('messenger','hide'); hideLauncher(); } }catch(e){}; closeFab.classList.remove('visible'); });
-      modal.classList.remove('hidden');
-      setTimeout(()=>{ modal.classList.remove('opacity-0'); faqView.classList.remove('opacity-0','scale-95'); },10);
-      applyI18n();
-      await Promise.all([loadAnnouncements(),loadFAQ()]).catch(e => { console.error("Error during initial content load:", e); });
+    /* 文章点击 → 内嵌查看 */
+    faqList.addEventListener('click', async (e)=>{
+      const link = e.target.closest('a[data-id]'); if(!link) return;
+      e.preventDefault();
+      const id = link.getAttribute('data-id');
+      const lang = LANGS[cur].locale;
+
+      const artBox = document.getElementById('faq-article');
+      const titleEl2 = document.getElementById('faq-article-title');
+      const bodyEl  = document.getElementById('faq-article-body');
+
+      titleEl2.textContent = '加载中…';
+      bodyEl.innerHTML = '';
+      artBox.classList.remove('hidden');
+
+      try{
+        const data = await fetchWithTimeout(`${ZD.base}/api/v2/help_center/${lang}/articles/${id}.json`);
+        titleEl2.textContent = (data.article?.title)||'';
+        bodyEl.innerHTML = data.article?.body || '<p>无内容</p>';
+      }catch(_){
+        titleEl2.textContent = '加载失败';
+        bodyEl.innerHTML = '<p class="text-gray-500">请稍后重试</p>';
+      }
     });
-    function closeModal(){ modal.classList.add('opacity-0'); faqView.classList.add('opacity-0','scale-95'); setTimeout(()=>modal.classList.add('hidden'),300); }
-    document.querySelectorAll('.close-modal-btn').forEach(b=>b.addEventListener('click', closeModal));
-    modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+    document.getElementById('faq-back').addEventListener('click', ()=>{ document.getElementById('faq-article').classList.add('hidden'); });
 
-    /* 语言弹窗：打开 = 桌面锚定；移动端居中 */
+    /* 语言弹窗：桌面从地球处弹，手机居中；同一按钮开关 */
     function openLangModal(){
-      btnZh.classList.toggle('active',cur==='zh');
-      btnEn.classList.toggle('active',cur==='en');
-
+      btnZh.classList.toggle('active',cur==='zh'); btnEn.classList.toggle('active',cur==='en');
       langBtn.classList.add('anim-pop'); setTimeout(()=>langBtn.classList.remove('anim-pop'),240);
-
       langBackdrop.classList.remove('closing','as-popover','pop-above');
 
       if (!isMobile()) {
         const viewRect = faqView.getBoundingClientRect();
         const btnRect  = langBtn.getBoundingClientRect();
-
         const popW = 320, popH = 160;
         let left = btnRect.left - viewRect.left - 6;
         let top  = btnRect.bottom - viewRect.top + 10;
         let above = false;
-
         const maxLeft = viewRect.width - popW - 12;
         if (left > maxLeft) left = Math.max(12, maxLeft);
-
-        if (top + popH > viewRect.height) {
-          top  = btnRect.top - viewRect.top - popH - 10;
-          above = true;
-        }
-
-        const btnCenter = btnRect.left - viewRect.left + btnRect.width/2;
-        let arrowLeft = btnCenter - left - 5;
-        arrowLeft = Math.max(18, Math.min(popW - 28, arrowLeft));
-
+        if (top + popH > viewRect.height) { top  = btnRect.top - viewRect.top - popH - 10; above = true; }
         langBackdrop.style.setProperty('--pop-top',  top + 'px');
         langBackdrop.style.setProperty('--pop-left', left + 'px');
+        const btnCenterX = btnRect.left - viewRect.left + btnRect.width/2;
+        let arrowLeft = btnCenterX - left - 5; arrowLeft = Math.max(18, Math.min(popW - 28, arrowLeft));
         langBackdrop.style.setProperty('--arrow-left', arrowLeft + 'px');
         langBackdrop.style.setProperty('--arrow-top', above ? 'auto' : '-6px');
+        const originX = Math.max(12, Math.min(popW - 12, btnCenterX - left)) + 'px';
+        const originY = above ? (popH - 6) + 'px' : '6px';
+        langBackdrop.style.setProperty('--origin-x', originX);
+        langBackdrop.style.setProperty('--origin-y', originY);
         if (above) langBackdrop.classList.add('pop-above');
-
         langBackdrop.classList.add('as-popover');
       } else {
         document.documentElement.style.overflow = 'hidden';
       }
-
-      void langBackdrop.offsetWidth;
-      langBackdrop.classList.add('open');
+      void langBackdrop.offsetWidth; langBackdrop.classList.add('open');
     }
     function closeLangModal(){
-      langBackdrop.classList.remove('open');
-      langBackdrop.classList.add('closing');
+      langBackdrop.classList.remove('open'); langBackdrop.classList.add('closing');
       const done = () => {
         langBackdrop.classList.remove('closing','as-popover','pop-above');
-        langBackdrop.style.removeProperty('--pop-top');
-        langBackdrop.style.removeProperty('--pop-left');
-        langBackdrop.style.removeProperty('--arrow-left');
-        langBackdrop.style.removeProperty('--arrow-top');
+        ['--pop-top','--pop-left','--arrow-left','--arrow-top','--origin-x','--origin-y'].forEach(v=>langBackdrop.style.removeProperty(v));
         document.documentElement.style.overflow = '';
         langBackdrop.removeEventListener('transitionend', done);
       };
       langBackdrop.addEventListener('transitionend', done);
     }
-    langBtn.addEventListener('click', openLangModal);
+    langBtn.addEventListener('click', ()=>{ langBackdrop.classList.contains('open')?closeLangModal():openLangModal(); });
     langCloseBtn.addEventListener('click', closeLangModal);
     langBackdrop.addEventListener('click', (e)=>{ if(e.target===langBackdrop) closeLangModal(); });
-    btnZh.addEventListener('click', ()=>{
-      if (cur!=='zh'){ cur='zh'; applyI18n(); }
-      closeLangModal(); Promise.all([loadAnnouncements(),loadFAQ()]).catch(()=>{});
-    });
-    btnEn.addEventListener('click', ()=>{
-      if (cur!=='en'){ cur='en'; applyI18n(); }
-      closeLangModal(); Promise.all([loadAnnouncements(),loadFAQ()]).catch(()=>{});
+    btnZh.addEventListener('click', ()=>{ if (cur!=='zh'){ cur='zh'; applyI18n(); } closeLangModal(); Promise.all([loadAnnouncements(),loadFAQ()]).catch(()=>{}); });
+    btnEn.addEventListener('click', ()=>{ if (cur!=='en'){ cur='en'; applyI18n(); } closeLangModal(); Promise.all([loadAnnouncements(),loadFAQ()]).catch(()=>{}); });
+
+    /* ====== 与 Zendesk 聊天的联动（只在手机隐藏右下角按钮） ====== */
+    let chatOpen=false;
+    function closeChatHard(){ try{ zE('messenger','close'); zE('messenger','hide'); }catch(_){ } }
+    onZEReady(()=>{
+      try{
+        zE('messenger:on','open',  ()=>{ 
+          chatOpen=true;
+          if (isMobile()) openBtn.classList.add('hidden');
+        });
+        zE('messenger:on','close', ()=>{ 
+          chatOpen=false;
+          const faqHidden = modal.classList.contains('hidden') || modal.classList.contains('opacity-0');
+          if (isMobile() && faqHidden) openBtn.classList.remove('hidden');
+        });
+        zE('messenger:on','hide',  ()=>{ 
+          chatOpen=false;
+          const faqHidden = modal.classList.contains('hidden') || modal.classList.contains('opacity-0');
+          if (isMobile() && faqHidden) openBtn.classList.remove('hidden');
+        });
+      }catch(_){}
+      closeChatHard();
+      // 初次 2.5s 防闪
+      const deadline = Date.now()+2500;
+      (function loop(){ closeChatHard(); if(Date.now()<deadline) requestAnimationFrame(loop); })();
+      setTimeout(()=>document.documentElement.classList.remove('zd-prehide'), 2600);
     });
 
-    /* 从 FAQ 打开聊天 */
-    startChat.addEventListener('click', ()=>{
-      closeModal();
-      onZEReady(()=>{ try{ zE('messenger','show'); zE('messenger','open'); }catch(e){}; alignDesktopClose(); });
+    /* 右下角按钮：优先关聊天；否则开/关 FAQ */
+    openBtn.addEventListener('click', async ()=>{
+      if (chatOpen) { closeChatHard(); return; }
+      const faqVisible = !modal.classList.contains('hidden') && !modal.classList.contains('opacity-0');
+      if (faqVisible) { closeFAQ(); return; }
+      openFAQ(); applyI18n();
+      await Promise.all([loadAnnouncements(),loadFAQ()]).catch(()=>{});
     });
 
-    /* 自定义“V” */
-    // 点击只执行 hide，避免默认最小化动画导致“弹一下”
-    closeFab.addEventListener('click', () => {
-      onZEReady(() => {
-        try { zE('messenger','hide'); } catch(e){}
-        closeFab.classList.remove('visible');
-        stopAlign();
+    /* 从 FAQ 打开聊天：只在手机先隐藏按钮 */
+    startChat?.addEventListener('click', ()=>{
+      if (isMobile()) openBtn.classList.add('hidden');
+      closeFAQ();
+      onZEReady(()=>{
+        const tryOpen=(n=0)=>{
+          try{ zE('messenger','show'); zE('messenger','open'); }catch(_){}
+          setTimeout(()=>{ if(!chatOpen && n<8) tryOpen(n+1); },120);
+        };
+        tryOpen();
       });
     });
-
-    // 更稳地找到聊天 iframe：兼容不同 title/src
-    function getChatFrame(){
-      const iframes = [...document.querySelectorAll('iframe')];
-      const candidates = iframes.map(f=>{
-        const t=(f.title||'').toLowerCase();
-        const s=(f.src||'').toLowerCase();
-        const r=f.getBoundingClientRect();
-        const zend = s.includes('zdassets.com') || s.includes('zendesk.com') || t.includes('zendesk') || t.includes('messaging') || s.includes('web_widget');
-        return {f,r,zend};
-      }).filter(x=>x.zend);
-
-      if(!candidates.length) return null;
-      candidates.sort((a,b)=>(b.r.width*b.r.height)-(a.r.width*a.r.height));
-      return candidates[0].f;
-    }
-
-    function isChatExpanded(){
-      const f = getChatFrame();
-      if (!f) return false;
-
-      const r = f.getBoundingClientRect();
-      const style = window.getComputedStyle(f);
-      const visible = style && style.display !== 'none' && style.visibility !== 'hidden' && (parseFloat(style.opacity||'1') > 0.01);
-
-      // 放宽阈值，兼容缩放/不同布局
-      const expanded = visible && r.height >= 160 && r.width >= 240 &&
-                       r.bottom > 0 && r.right > 0 && r.top < window.innerHeight && r.left < window.innerWidth;
-
-      return expanded;
-    }
-
-    function placeV(frame){
-      if(!frame || !isChatExpanded()) { closeFab.classList.remove('visible'); return; }
-      const r=frame.getBoundingClientRect();
-      const headerH=56, btnH=28, vOffset=Math.max(8,(headerH-btnH)/2);
-      closeFab.classList.add('visible');
-      closeFab.style.left='auto';
-      closeFab.style.right=(window.innerWidth - r.right + 12)+'px';
-      closeFab.style.top=(r.top + vOffset)+'px';
-    }
-
-    let rafId=null;
-    function alignDesktopClose(){
-      // 不再因为窄屏就早退；是否显示交由 CSS 控制
-      cancelAnimationFrame(rafId);
-      const loop=()=>{ const f=getChatFrame(); if(f) placeV(f); rafId=requestAnimationFrame(loop); };
-      rafId=requestAnimationFrame(loop);
-    }
-    function stopAlign(){ cancelAnimationFrame(rafId); rafId=null; closeFab.classList.remove('visible'); }
-
-    onZEReady(()=>{ try{
-      zE('messenger:on','open',  ()=>{ alignDesktopClose(); });
-      zE('messenger:on','close', ()=>{ 
-        try{ zE('messenger','hide'); }catch(e){}  // 进一步避免默认动画
-        stopAlign(); 
-      });
-      zE('messenger:on','hide',  ()=>{ stopAlign(); });
-    }catch(_){}});
-
-    function hideLauncher(){
-      // 更激进隐藏小尺寸 Launcher，减少闪现
-      document.querySelectorAll('iframe').forEach(f=>{
-        const t=(f.title||'').toLowerCase(), s=(f.src||'').toLowerCase();
-        const r=f.getBoundingClientRect();
-        const zend = s.includes('zdassets.com')||s.includes('zendesk.com')||t.includes('zendesk')||t.includes('messaging');
-        const looksLikeLauncher = (r.width<=200 && r.height<=200);
-        if(zend && looksLikeLauncher){
-          f.style.setProperty('display','none','important');
-          f.style.setProperty('visibility','hidden','important');
-          f.style.setProperty('opacity','0','important');
-          f.style.setProperty('pointer-events','none','important');
-          f.style.setProperty('width','0','important');
-          f.style.setProperty('height','0','important');
-        }
-      });
-    }
-    setInterval(hideLauncher,900);
-    new MutationObserver(hideLauncher).observe(document.documentElement,{childList:true,subtree:true});
 
     /* FAQ 导航/搜索 */
     faqNav.addEventListener('click', e=>{
       const a=e.target.closest('.faq-nav-item'); if(!a) return; e.preventDefault();
-      faqSearch.value=''; document.querySelectorAll('.faq-nav-item').forEach(i=>{i.classList.remove('active','font-semibold'); i.classList.add('text-gray-500');});
+      faqSearch.value='';
+      document.querySelectorAll('.faq-nav-item').forEach(i=>{i.classList.remove('active','font-semibold'); i.classList.add('text-gray-500');});
       a.classList.add('active','font-semibold'); a.classList.remove('text-gray-500');
       const hl=document.getElementById('faq-nav-highlighter'); hl.style.opacity='1'; hl.style.top=`${a.offsetTop}px`; hl.style.height=`${a.offsetHeight}px`;
       renderArticles((faqState.articlesBySection||{})[a.dataset.sectionId]||[]);
     });
-
-    const doSearch=(function(){
-      const fn=()=>{
-        const q=(faqSearch.value||'').trim().toLowerCase();
-        const hl=document.getElementById('faq-nav-highlighter');
-        if(!q){
-          const act=faqNav.querySelector('.faq-nav-item.active');
-          if(act){ renderArticles((faqState.articlesBySection||{})[act.dataset.sectionId]||[]); if(hl){hl.style.opacity='1'; hl.style.top=`${act.offsetTop}px`; hl.style.height=`${act.offsetHeight}px`;} }
-          return;
+    const doSearch=(function(){ let t; return ()=>{ clearTimeout(t); t=setTimeout(()=>{
+      const q=(faqSearch.value||'').trim().toLowerCase();
+      const hl=document.getElementById('faq-nav-highlighter');
+      if(!q){
+        const act=faqNav.querySelector('.faq-nav-item.active');
+        if(act){
+          renderArticles((faqState.articlesBySection||{})[act.dataset.sectionId]||[]);
+          if(hl){ hl.style.opacity='1'; hl.style.top=`${act.offsetTop}px`; hl.style.height=`${act.offsetHeight}px`; }
         }
-        if(hl) hl.style.opacity='0'; document.querySelectorAll('.faq-nav-item').forEach(i=>i.classList.remove('active','font-semibold'));
-        renderArticles((faqState.allArticles||[]).filter(a=>(a.title||'').toLowerCase().includes(q)));
-      };
-      return (ms=>{ let t; return ()=>{ clearTimeout(t); t=setTimeout(fn,ms||180); }; })(180);
-    })();
+        return;
+      }
+      if(hl) hl.style.opacity='0';
+      document.querySelectorAll('.faq-nav-item').forEach(i=>i.classList.remove('active','font-semibold'));
+      renderArticles((faqState.allArticles||[]).filter(a=> (a.title||'').toLowerCase().includes(q)));
+    },180); };})();
     faqSearch.addEventListener('input',doSearch);
+
+    /* FAQ 关闭（手机 X 点不动：多事件兜底） */
+    ['click','touchend','pointerup'].forEach(evt=>{
+      document.querySelectorAll('.close-modal-btn').forEach(btn=>{
+        btn.addEventListener(evt, (e)=>{ e.preventDefault(); closeFAQ(); }, {passive:false});
+      });
+    });
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) closeFAQ(); }, {passive:true});
+
+    /* 初始文案 */
+    applyI18n();
   })();
   </script>
 </body>
