@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <title>客户支持（Zendesk Messaging）</title>
+  <title>客户支持</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- 预隐藏，防首次闪现 -->
@@ -137,10 +137,11 @@
         <div id="faq-scroll-content" class="flex-grow min-h-0 p-6 overflow-y-auto">
           <!-- 公告 -->
           <div id="ann-pill" class="ann-pill">
-            <svg class="ann-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="4" width="18" height="18" rx="3" ry="3"></rect>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
+<svg class="ann-icon" viewBox="0 0 24 24" fill="none"
+     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path>
+  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+</svg>
             <div id="ann-text" class="ann-track">
               <a class="ann-slot" target="_blank" rel="noopener noreferrer"></a>
               <a class="ann-slot" target="_blank" rel="noopener noreferrer"></a>
@@ -231,10 +232,10 @@
            tool2:'https://100ex.zendesk.com/hc/zh-cn/articles/46055234188825',
            tool3:'https://100ex.zendesk.com/hc/zh-cn/articles/46054832990745',
            tool4:'https://100ex.zendesk.com/hc/zh-cn/articles/46055701344921' },
-      en:{ tool1:'https://100ex.zendesk.com/hc/en-us/articles/46056201877529',
-           tool2:'https://100ex.zendesk.com/hc/en-us/articles/46055234188825',
-           tool3:'https://100ex.zendesk.com/hc/en-us/articles/46054832990745',
-           tool4:'https://100ex.zendesk.com/hc/en-us/articles/46055701344921' }
+      en:{ tool1:'https://100ex.zendesk.com/hc/en-us/articles/49705331009177',
+           tool2:'https://100ex.zendesk.com/hc/en-us/articles/49705375212825',
+           tool3:'https://100ex.zendesk.com/hc/en-us/articles/49705424512537',
+           tool4:'https://100ex.zendesk.com/hc/en-us/articles/49705456840473' }
     };
 
     const LANGS = {
@@ -247,7 +248,7 @@
       en:{ locale:'en-us', faqCatId:'45222043871257', announceCatId:'45222030451097', ui:{
         title:'Support', desc:'Browse FAQs below for instant answers. If that doesn’t help, contact our live support via the button.',
         selfservice:'Self Service', faq:'FAQs', chat:'Contact Support', searchPH:'Search…', noResult:'No results found.',
-        loading:'Loading…', tool1:'Reset Authenticator', tool2:'Didn’t receive verification',
+        loading:'Loading…', tool1:'Reset Authenticator', tool2:'Didn’t get verification',
         tool3:'How to Verify Identity', tool4:'Forgot Password', langTitle:'Choose Language',
         zhBtn:'Chinese (Simplified)', enBtn:'English'
       }}
@@ -414,7 +415,12 @@
       document.getElementById('faq-article').classList.add('hidden');
       if(!list||!list.length){ faqList.innerHTML=''; noResults.textContent=ui('noResult'); noResults.classList.remove('hidden'); return; }
       noResults.classList.add('hidden');
-      faqList.innerHTML=list.map(a=>`<li><a href="#" data-id="${a.id}" class="hover:text-teal-600 transition-colors">${(a.title||'').replace(/[&<>\"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[s]))}</a></li>`).join('');
+      faqList.innerHTML = list.map(a =>
+  `<li><a href="${a.html_url}" target="_blank" rel="noopener noreferrer"
+        class="hover:text-teal-600 transition-colors">
+     ${(a.title||'').replace(/[&<>\"]/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[s]))}
+   </a></li>`
+).join('');
     }
     async function loadFAQ(){
       const lang=LANGS[cur]; const catId=(lang.faqCatId||'').trim();
